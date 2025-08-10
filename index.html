@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CSE (Data Science) Portal</title>
+  <style>
+    :root{
+      --bg1: #0f2027;
+      --bg2: #203a43;
+      --bg3: #2c5364;
+      --accent: cyan;
+      --text: #ffffff;
+      --panel-bg: rgba(0,0,0,0.6);
+      --btn-text: black;
+    }
+
+    /* Themes */
+    body.theme-black {
+      --bg1: #000000;
+      --bg2: #0f0f0f;
+      --bg3: #1a1a1a;
+      --accent: #9ad6ff;
+      --panel-bg: rgba(0,0,0,0.7);
+      --btn-text: #fff;
+    }
+
+    /* Base Style */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s ease;
+      padding-bottom: 40px;
+    }
+
+    /* Navbar */
+    nav {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: 0 0 12px var(--accent);
+    }
+    .nav-left {display:flex; gap:8px; align-items:center;}
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 12px;
+      margin: 0 3px;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+    nav a:hover {
+      background: var(--accent);
+      color: black;
+      box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+    }
+
+    .theme-controls {display:flex; gap:8px; align-items:center;}
+    .theme-btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .theme-btn.active {outline: 2px solid var(--accent); box-shadow: 0 0 18px var(--accent);}
+
+    /* Sections */
+    .container {padding: 20px;}
+    section {display: none; padding: 20px; animation: fadeIn 0.35s ease-in-out;}
+    section.active {display:block;}
+    @keyframes fadeIn { from {opacity:0; transform: translateY(6px)} to {opacity:1; transform:translateY(0);} }
+
+    h1,h2 {text-shadow: 0 0 8px var(--accent); margin: 8px 0 16px 0;}
+
+    /* Inputs & Buttons */
+    input, select, button {
+      padding: 8px;
+      margin: 6px 0;
+      width: 100%;
+      max-width: 420px;
+      border: none;
+      border-radius: 6px;
+    }
+    .btn {
+      padding: 8px 14px;
+      cursor: pointer;
+      background: linear-gradient(45deg, var(--accent), #00ffcc44);
+      color: var(--btn-text);
+      border: none;
+      font-weight: bold;
+      transition: 0.18s;
+      box-shadow: 0 0 10px var(--accent);
+      border-radius: 6px;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px var(--accent); }
+
+    /* Table */
+    table {
+      border-collapse: collapse;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 820px;
+      background: rgba(0, 0, 0, 0.35);
+      color: white;
+      box-shadow: 0 0 10px var(--accent);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    table, th, td { border: 1px solid rgba(255,255,255,0.06); }
+    th, td { padding: 10px; text-align: left; }
+
+    /* Result Box */
+    .result-box {
+      background: var(--panel-bg);
+      padding: 16px;
+      border-radius: 8px;
+      display: inline-block;
+      box-shadow: 0 0 15px var(--accent);
+    }
+
+    /* Quiz styles */
+    .question { margin-bottom: 12px; background: rgba(0,0,0,0.25); padding:10px; border-radius:6px; max-width:820px; }
+    .options label { display:block; margin:6px 0; cursor:pointer; }
+
+    /* small screens */
+    @media (max-width:640px){
+      nav {flex-direction:column; align-items:flex-start;}
+      .nav-left{flex-wrap:wrap;}
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('login')">Login</a>
+    <a href="#" onclick="showSection('register')">Registration</a>
+    <a href="#" onclick="showSection('test')">Test</a>
+    <a href="#" onclick="showSection('results')">Results</a>
+  </div>
+
+  <div class="theme-controls" title="Choose theme">
+    <span style="margin-right:6px">Theme:</span>
+    <button class="theme-btn" id="theme-default" onclick="setTheme('')" >Default</button>
+    <button class="theme-btn" id="theme-black" onclick="setTheme('black')">Black</button>
+    <!-- red removed as requested -->
+  </div>
+</nav>
+
+<div class="container">
+  <section id="home" class="active">
+    <h1>Welcome to CSE (Data Science) Portal</h1>
+    <p>Use the navigation to log in, register, take tests and view results. Pick a theme using the buttons in the top-right.</p>
+  </section>
+
+  <section id="login">
+    <h2>Login</h2>
+    <button class="btn" onclick="showLoginType('student')">Student Login</button>
+    <button class="btn" onclick="showLoginType('admin')">Admin Login</button>
+
+    <div id="studentLogin" style="display:none; margin-top:12px;">
+      <h3>Enter Roll Number</h3>
+      <input type="text" id="rollNumber" placeholder="Enter Roll Number">
+      <button class="btn" onclick="showStudentData()">Submit</button>
+      <div id="studentData" style="margin-top:12px"></div>
+    </div>
+
+    <div id="adminLogin" style="display:none; margin-top:12px;">
+      <p>Admin login form here...</p>
+    </div>
+  </section>
+
+  <section id="register">
+    <h2>Course Registration</h2>
+    <input type="text" placeholder="Course Code">
+    <input type="text" placeholder="Course Name">
+    <input type="text" placeholder="Location">
+    <input type="text" placeholder="Roll Number">
+    <input type="text" placeholder="Year">
+    <input type="text" placeholder="Semester">
+    <button class="btn">Register</button>
+  </section>
+
+  <section id="test">
+    <h2>Data Science Test</h2>
+    <div id="quizArea">
+      <!-- Quiz is generated dynamically -->
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn" onclick="submitQuiz()">Submit Test</button>
+      <button class="btn" onclick="generateQuiz()">Restart / New Quiz</button>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2>Your Results</h2>
+    <div class="result-box">
+      <p id="scoreText">Please complete the test to see your score.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  /* ---------- SUBJECTS - fixed list (no randomization) ---------- */
+  const fixedSubjects = [
+    {id: "PY101", name: "Python", gradePoint: 9, credits: 4},
+    {id: "JV102", name: "Java", gradePoint: 8, credits: 4},
+    {id: "OS103", name: "Operating System", gradePoint: 7, credits: 3},
+    {id: "DB104", name: "Database Management System", gradePoint: 9, credits: 4},
+    {id: "CN105", name: "Computer Networks", gradePoint: 8, credits: 3},
+    {id: "R106", name: "R Language", gradePoint: 8, credits: 3}
+  ];
+
+  function showSection(id) {
+    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+    const sec = document.getElementById(id);
+    if(sec) sec.classList.add("active");
+
+    // when opening test, generate new quiz
+    if(id === "test") generateQuiz();
+  }
+
+  function showLoginType(type) {
+    document.getElementById("studentLogin").style.display = type === "student" ? "block" : "none";
+    document.getElementById("adminLogin").style.display = type === "admin" ? "block" : "none";
+  }
+
+  // show student data, credits, credit points, SGPA, CGPA
+  function showStudentData() {
+    const roll = document.getElementById("rollNumber").value.trim();
+    const container = document.getElementById("studentData");
+    if(!roll) {
+      container.innerHTML = `<p style="color: #ffd700">Please enter a roll number.</p>`;
+      return;
+    }
+
+    // Build table
+    let html = `<h3>Subjects for Roll No: ${escapeHtml(roll)}</h3>`;
+    html += `<table><tr><th>Course ID</th><th>Course Name</th><th>Grade Point</th><th>Credits</th><th>Credit Points</th></tr>`;
+
+    let totalCredits = 0;
+    let totalCreditPoints = 0;
+    fixedSubjects.forEach(s => {
+      const cPoints = s.gradePoint * s.credits;
+      totalCredits += s.credits;
+      totalCreditPoints += cPoints;
+      html += `<tr>
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.gradePoint}</td>
+                <td>${s.credits}</td>
+                <td>${cPoints}</td>
+               </tr>`;
+    });
+    html += `</table>`;
+
+    // SGPA = totalCreditPoints / totalCredits
+    const sgpa = (totalCreditPoints / totalCredits).toFixed(2);
+    // CGPA example: previous cumulative slightly lower
+    const cgpa = (Math.max(0, sgpa - 0.20)).toFixed(2);
+
+    html += `<p><strong>Total Credits:</strong> ${totalCredits}</p>`;
+    html += `<p><strong>Total Credit Points:</strong> ${totalCreditPoints}</p>`;
+    html += `<p><strong>SGPA:</strong> ${sgpa}</p>`;
+    html += `<p><strong>CGPA:</strong> ${cgpa}</p>`;
+
+    container.innerHTML = html;
+  }
+
+  /* ---------- QUIZ: question bank + dynamic generation ---------- */
+  const questionBank = [
+    {q: "Which language is most used in Data Science?", options:["Python","Java","C++","R"], ans:"Python"},
+    {q: "What does 'EDA' stand for?", options:["Exploratory Data Analysis","Efficient Data Arrangement","Enhanced Data Access","Example-Driven Analytics"], ans:"Exploratory Data Analysis"},
+    {q: "Which library is used for Data Visualization in Python?", options:["Matplotlib","NumPy","Pandas-Pro","Scikit-plot"], ans:"Matplotlib"},
+    {q: "Which algorithm is used for classification?", options:["Decision Tree","K-Means","PCA","Apriori"], ans:"Decision Tree"},
+    {q: "What does 'AI' stand for?", options:["Artificial Intelligence","Automated Information","Applied Informatics","Analytical Integration"], ans:"Artificial Intelligence"},
+    {q: "Which package is used in R for data frames?", options:["dplyr","matplotlib","scikit-learn","numpy"], ans:"dplyr"},
+    {q: "Which SQL statement is used to fetch data?", options:["SELECT","GET","FETCH","PULL"], ans:"SELECT"},
+    {q: "Which network layer routes packets between networks?", options:["Network Layer","Transport Layer","Application Layer","Data Link Layer"], ans:"Network Layer"},
+    {q: "Which sorting algorithm is stable?", options:["Merge Sort","Quick Sort","Heap Sort","Selection Sort"], ans:"Merge Sort"},
+    {q: "Which python library is commonly used for machine learning?", options:["scikit-learn","requests","flask","beautifulsoup"], ans:"scikit-learn"}
+  ];
+
+  let currentQuiz = []; // holds current randomized quiz items
+
+  function shuffleArray(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function generateQuiz(){
+    const bankShuffled = shuffleArray(questionBank);
+    currentQuiz = bankShuffled.slice(0,5).map((item, idx) => {
+      return {id: "q"+(idx+1), q: item.q, options: shuffleArray(item.options), ans: item.ans};
+    });
+    renderQuiz();
+  }
+
+  function renderQuiz(){
+    const container = document.getElementById("quizArea");
+    let html = `<form id="quizForm">`;
+    currentQuiz.forEach((item, i) => {
+      html += `<div class="question"><p><strong>Q${i+1}.</strong> ${item.q}</p><div class="options">`;
+      item.options.forEach(opt => {
+        html += `<label><input type="radio" name="${item.id}" value="${escapeHtml(opt)}"> ${opt}</label>`;
+      });
+      html += `</div></div>`;
+    });
+    html += `</form>`;
+    container.innerHTML = html;
+    // reset results text
+    document.getElementById("scoreText").innerText = "Please complete the test to see your score.";
+  }
+
+  // Submit test: compute score and show results (do NOT regenerate quiz here)
+  function submitQuiz(){
+    if(!currentQuiz || currentQuiz.length === 0) {
+      alert("Quiz not generated yet. Opening test and generating quiz...");
+      showSection('test');
+      return;
+    }
+    let score = 0;
+    currentQuiz.forEach(item => {
+      const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+      if(selected && unescapeHtml(selected.value) === item.ans) score++;
+    });
+    document.getElementById("scoreText").innerText = `You scored ${score} out of ${currentQuiz.length}`;
+    // Show results section with the score
+    showSection("results");
+    // DO NOT call generateQuiz() here — leave quiz regeneration to Restart button
+  }
+
+  /* safe escape helpers for html attribute values */
+  function escapeHtml(str){
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function unescapeHtml(str){
+    return String(str).replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  }
+
+  /* ---------- Theme handling ---------- */
+  function setTheme(name){
+    document.body.classList.remove('theme-black');
+    if(name === 'black') document.body.classList.add('theme-black');
+
+    // set active button style
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    if(name === 'black') document.getElementById('theme-black').classList.add('active');
+    else document.getElementById('theme-default').classList.add('active');
+
+    // persist
+    localStorage.setItem('cse_theme', name || 'default');
+  }
+
+  // on load restore theme and init
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('cse_theme') || 'default';
+    if(saved === 'black') setTheme('black');
+    else setTheme('');
+    currentQuiz = [];
+  });
+</script>
+</body>
+</html>
